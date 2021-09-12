@@ -1,6 +1,8 @@
 package com.hunter;
 
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Game {
 
@@ -8,7 +10,8 @@ public class Game {
     private int[][] mineFieldToShow;
     private boolean isGameOver = false;
     private boolean isSuccess = false;
-    private int gameStep = 0;
+    private Set<String> pastMoves = new HashSet<>();
+
 
     Scanner scanner = new Scanner(System.in);
 
@@ -41,9 +44,15 @@ public class Game {
         System.out.print("column: ");
         int column = this.scanner.nextInt();
         if(row >= 0 && row < mineField.getRow() && column >= 0 && column < mineField.getColumn()) {
-            gameStep++;
-            checkOutLand(row, column);
-            MineFieldShower.showMineFieldArray(mineFieldToShow);
+            if(pastMoves.contains(row + "." + column)) {
+                // this move has been done by the player before
+                System.out.println("you did this move before! try again");
+            }
+            else {
+                pastMoves.add(row + "." + column);
+                checkOutLand(row, column);
+                MineFieldShower.showMineFieldArray(mineFieldToShow);
+            }
         }
         else{
             System.out.println("invalid move! try again");
@@ -83,7 +92,7 @@ public class Game {
 
     // check the game state
     public void checkGameState() {
-        if(gameStep == mineField.getRow() * mineField.getColumn() - DecideAmount.decideMineAmount(mineField.getRow(),
+        if(pastMoves.size() == mineField.getRow() * mineField.getColumn() - DecideAmount.decideMineAmount(mineField.getRow(),
             mineField.getColumn())) {
             isSuccess = true;
             isGameOver = true;

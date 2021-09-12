@@ -1,5 +1,8 @@
 package com.hunter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class RandomMineSpawn {
 
     public static void spawnMine(MineField mineField) {
@@ -9,11 +12,20 @@ public class RandomMineSpawn {
 
 
     private static void plantMines(MineField mineField, int mineAmount) {
-        for(int i = mineAmount; i > 0; i--) {
+        Set<String> lands = new HashSet<>();
+        int i = mineAmount;
+        while(i > 0) {
             int mineRow = (int) (Math.random() * (mineField.getRow()));
             int mineColumn = (int) (Math.random() * (mineField.getColumn()));
 
-            mineField.getMinefield()[mineRow][mineColumn] = 1;
+            if(lands.contains(mineRow + "." + mineColumn)) {
+                // do not anything and let the while loop to continue
+            }
+            else {
+                lands.add(mineRow + "." + mineColumn);
+                mineField.getMinefield()[mineRow][mineColumn] = 1;
+                i--;
+            }
         }
     }
 
